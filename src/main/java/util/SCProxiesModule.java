@@ -1,5 +1,7 @@
 package util;
-import giter.HttpFetcher;
+
+import giter.HttpClient;
+import giter.Proxier;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -14,7 +16,9 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SCProxiesModule {
+public class SCProxiesModule implements Proxier {
+
+	final static HttpClient hc = new HttpClient().connect(5000);
 
 	private final static String URL = "http://60.173.11.232:2222/api.asp?ddbh=127891053235898&sl=200&noinfo=true";
 
@@ -32,7 +36,7 @@ public class SCProxiesModule {
 		for (int i = 0; i < 0x7fffffff; i++) {
 			try {
 
-				for (String s : HttpFetcher.GET(URL).split("\r?\n")) {
+				for (String s : hc.GET(URL).getValue().split("\r?\n")) {
 					String host = s.substring(0, s.indexOf(':'));
 					int port = NumberUtils
 							.toInt(s.substring(s.indexOf(':') + 1));
@@ -67,7 +71,8 @@ public class SCProxiesModule {
 
 	}
 
-	public static Proxy get() {
+	@Override
+	public Proxy get() {
 
 		while (proxies.isEmpty()) {
 			synchronized (proxies) {

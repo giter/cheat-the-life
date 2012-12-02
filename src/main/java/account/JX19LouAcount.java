@@ -1,6 +1,6 @@
 package account;
 
-import giter.HttpUtil;
+import giter.HttpClient;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -15,8 +15,8 @@ import com.mongodb.Mongo;
 
 public class JX19LouAcount {
 
-	static HttpUtil util = HttpUtil.instance().connect(3000).read(30000)
-			.persist(false).cookie("_Z3nY0d4C_", "37XgPK9h");
+	static HttpClient util = new HttpClient().connect(3000).read(30000)
+			.persistCookies(false).cookie("_Z3nY0d4C_", "37XgPK9h");
 
 	public static void main(String[] args) throws UnknownHostException {
 
@@ -27,9 +27,11 @@ public class JX19LouAcount {
 
 			try {
 
-				Document doc = Jsoup.parse(util.GET(String.format(
-						"http://jiaxing.19lou.com/user/profile-330%05d-1.html",
-						i)));
+				Document doc = Jsoup
+						.parse(util
+								.GET(String
+										.format("http://jiaxing.19lou.com/user/profile-330%05d-1.html",
+												i)).getValue());
 				Element ele = doc.select(".ta-home a").first();
 
 				if (ele != null) {
