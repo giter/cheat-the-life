@@ -1,6 +1,6 @@
 package account;
 
-import giter.HttpClient;
+import giter.http.utils.HttpClient;
 
 import java.io.IOException;
 import java.net.UnknownHostException;

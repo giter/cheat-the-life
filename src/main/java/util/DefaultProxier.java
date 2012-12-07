@@ -1,7 +1,7 @@
 package util;
 
-import giter.HttpClient;
-import giter.Proxier;
+import giter.http.utils.HttpClient;
+import giter.http.utils.Proxier;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
