@@ -8,6 +8,7 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Proxy.Type;
 import java.net.SocketAddress;
+import java.util.Properties;
 import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -16,16 +17,24 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SCProxiesModule implements Proxier {
+public class DefaultProxier implements Proxier {
 
-	final static HttpClient hc = new HttpClient().connect(5000);
+	final static HttpClient						hc			= new HttpClient().connect(5000);
+	private final static String				URL;
 
-	private final static String URL = "http://60.173.11.232:2222/api.asp?ddbh=127891053235898&sl=200&noinfo=true";
+	static {
+		Properties properties = new Properties();
+		try {
+			properties.load(DefaultProxier.class.getResourceAsStream("/resources.properties"));
+			URL = properties.get("url").toString();
+		} catch (IOException e) {
+			throw new RuntimeException("No properties specified!", e);
+		}
+	}
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(SCProxiesModule.class);
+	private static final Logger				logger	= LoggerFactory.getLogger(DefaultProxier.class);
 
-	private final static Queue<Proxy> proxies = new ConcurrentLinkedQueue<Proxy>();
+	private final static Queue<Proxy>	proxies	= new ConcurrentLinkedQueue<Proxy>();
 
 	public static void fillPool() {
 
@@ -38,16 +47,14 @@ public class SCProxiesModule implements Proxier {
 
 				for (String s : hc.GET(URL).getValue().split("\r?\n")) {
 					String host = s.substring(0, s.indexOf(':'));
-					int port = NumberUtils
-							.toInt(s.substring(s.indexOf(':') + 1));
+					int port = NumberUtils.toInt(s.substring(s.indexOf(':') + 1));
 					SocketAddress sa = new InetSocketAddress(host, port);
 					Proxy p = new Proxy(Type.HTTP, sa);
 					proxies.add(p);
 				}
 
 				if (logger.isDebugEnabled()) {
-					logger.debug(String.format("Loaded %d proxies",
-							proxies.size()));
+					logger.debug(String.format("Loaded %d proxies", proxies.size()));
 				}
 
 				try {
@@ -58,8 +65,7 @@ public class SCProxiesModule implements Proxier {
 
 				return;
 			} catch (IOException e) {
-				logger.warn("Cannot access proxy at " + i
-						+ " times , try again!");
+				logger.warn("Cannot access proxy at " + i + " times , try again!");
 			}
 
 			try {

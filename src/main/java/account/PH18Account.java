@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import util.SCProxiesModule;
+import util.DefaultProxier;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -23,7 +23,7 @@ import com.mongodb.Mongo;
 public class PH18Account {
 
 	static HttpClient util = new HttpClient().connect(3000).read(30000)
-			.persistCookies(false).proxier(new SCProxiesModule());
+			.persistCookies(false).proxier(new DefaultProxier());
 
 	final static String dic[] = new String[] { "000000", "111111", "11111111",
 			"112233", "123123", "123321", "123456", "12345678", "654321",
