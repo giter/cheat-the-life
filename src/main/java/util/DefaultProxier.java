@@ -26,7 +26,7 @@ public class DefaultProxier implements Proxier {
 		Properties properties = new Properties();
 		try {
 			properties.load(DefaultProxier.class.getResourceAsStream("/resources.properties"));
-			URL = properties.get("url").toString();
+			URL = properties.get("proxier").toString();
 		} catch (IOException e) {
 			throw new RuntimeException("No properties specified!", e);
 		}
@@ -91,5 +91,4 @@ public class DefaultProxier implements Proxier {
 		return proxies.remove();
 
 	}
-
 }
